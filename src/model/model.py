@@ -1,15 +1,26 @@
+import os
 import librosa
 import numpy as np
 from tensorflow.image import resize
 from tensorflow.keras.models import load_model
 
-model = load_model('./src/model/complete_model.h5') # 파일 경로에 한글이 있으면 안됨
+# model = load_model('./src/model/complete_model.h5') # 파일 경로에 한글이 있으면 안됨
+# 현재 파일 위치를 기준으로 모델 경로 설정
+model_path = os.path.join(os.path.dirname(__file__), 'complete_model.h5')
+model = load_model(model_path)
 
 classes = ['belly_pain','burping','discomfort','hungry','tired']
 
 # 음성 파일 불러오기
+'''
 def predict_data(path, target_shape=(128, 128)):
     audio_data, sample_rate = librosa.load(path, sr=None)
+    mel_spectrogram = librosa.feature.melspectrogram(y=audio_data, sr=sample_rate)
+    mel_spectrogram = resize(np.expand_dims(mel_spectrogram, axis=-1), target_shape)
+    return np.array([mel_spectrogram])
+    '''
+
+def predict_data(audio_data, sample_rate, target_shape=(128, 128)):
     mel_spectrogram = librosa.feature.melspectrogram(y=audio_data, sr=sample_rate)
     mel_spectrogram = resize(np.expand_dims(mel_spectrogram, axis=-1), target_shape)
     return np.array([mel_spectrogram])
